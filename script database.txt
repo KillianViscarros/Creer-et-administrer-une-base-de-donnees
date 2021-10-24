@@ -1,0 +1,65 @@
+mysql -u root -p
+CREATE DATABASE cinema;
+use cinema;
+
+CREATE TABLE TARIFS(
+    id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    nom VARCHAR(255),
+    prix double
+);
+
+INSERT INTO TARIFS(nom,prix) VALUES (' Plein tarif', '9.20' ), (' Étudiant', '7.60'), ('Jeune', '5.90');
+
+CREATE TABLE UTILISATEURS (
+    id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    nom VARCHAR(255),
+    prenom VARCHAR(255),
+    idTarif INT,
+    email VARCHAR(255),
+    FOREIGN KEY (idTarif) REFERENCES TARIFS (id)
+);
+
+INSERT INTO UTILISATEURS(nom,prenom,idTarif,email) VALUES ('julien', 'dupont', '1' ,'julien.dupont@studi.com'), ('julie', 'dupont','2', 'julie.dupont@studi.com');
+
+CREATE TABLE Reservation (
+    id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    idUtilisateur INT,
+    montant DOUBLE,
+    date DATE,
+    FOREIGN KEY (idUtilisateur) REFERENCES UTILISATEURS (id)
+);
+
+
+INSERT INTO Reservation (idUtilisateur,montant, date) VALUES ('1','18.40', '24-10-21'), ('2', '7.60', '23-10-21');
+
+CREATE TABLE Film(
+    id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    titre VARCHAR(255),
+    description VARCHAR(255)
+);
+
+INSERT INTO Film (titre,description) VALUES ('The Dark Knight','met en scène un méchant charismatique, le Joker'), ('L\'empire contre attaque', 'Le côté obscur de la force l\'emporte provisoirement sur le jeune Luc Skywalker et ses amis. Dans ce voyage dans une autre galaxy qui a marqué toute une génération');
+
+CREATE TABLE Salle(
+    id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    idFilm INT,
+    nbrPlaceMax INT,
+    FOREIGN KEY (idFilm) REFERENCES FILM (id)
+);
+
+INSERT INTO Salle(idFilm,nbrPlaceMax) VALUES ('1','25'), ('2', '15');
+
+CREATE TABLE ReservationDetail (
+    id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    idReservation INT,
+    idSalle INT,
+    nbrPlaceReserve INT,
+    FOREIGN KEY (idReservation) REFERENCES Reservation (id),
+    FOREIGN KEY (idSalle) REFERENCES Salle (id)
+);
+
+
+INSERT INTO ReservationDetail (idReservation,idSalle, nbrPlaceReserve) VALUES ('1','1', '2'), ('2', '2', '5');
+
+
+mysqldump -u root -p cinema> cinema.sql
